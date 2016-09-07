@@ -1,0 +1,44 @@
+{
+  "name": "genetic-worms",
+  "version": "1.0.0",
+  "description": "The main idea behind this project is to create a population of Worms and improve them using some concepts of Genetic Algorithms.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify scripts/main.js -o dist/bundle.js ",
+    "build:watch" : "watchify scripts/main.js -o dist/bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/igorsantana/genetic-worms.git"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/igorsantana/genetic-worms/issues"
+  },
+  "homepage": "https://github.com/igorsantana/genetic-worms#readme",
+  "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-preset-es2015": "^6.14.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.0"
+  },
+  "dependencies": {
+    "uuid": "^2.0.2"
+  }
+}
