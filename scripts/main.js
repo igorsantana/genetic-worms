@@ -1,6 +1,13 @@
 const Worm          = require('./Model/Worm')
-const Orientation   = require('./App/Orientation')
-const { uniqueCrashes, resolveCrashes, findCrashes, checkCrash } = require('./App/Crash')
+const { moveWorms }  = require('./App/Orientation')
+const { normalizeWormsThatHaveCrashed } = require('./App/Crash')
 
-const worms = [...(new Array(20))].map(value => Worm())
-const worms2 = resolveCrashes(uniqueCrashes(findCrashes(worms)), worms)
+// Initial population with random worms
+let worms = [...(new Array(1))].map(value => Worm())
+
+setInterval(() => {
+  worms = moveWorms(worms)
+  worms = normalizeWormsThatHaveCrashed(worms)
+  console.log(worms);
+  console.log('------');
+}, 1000)

@@ -4,9 +4,9 @@
   "description": "The main idea behind this project is to create a population of Worms and improve them using some concepts of Genetic Algorithms.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha tests",
     "build": "browserify scripts/main.js -o dist/bundle.js ",
-    "build:watch" : "watchify scripts/main.js -o dist/bundle.js"
+    "build:watch": "watchify scripts/main.js -o dist/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -36,9 +36,11 @@
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
     "babelify": "^7.3.0",
-    "browserify": "^13.1.0"
+    "browserify": "^13.1.0",
+    "mocha": "^3.0.2"
   },
   "dependencies": {
+    "redux": "^3.6.0",
     "uuid": "^2.0.2"
   }
 }

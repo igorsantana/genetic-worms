@@ -1,8 +1,9 @@
 // Check the x and y axis to see if two worms crashed with each other.
 const { generateWorm, fight, match }  = require('./Interactions')
 
-const checkCrash = (w1, w2) => {
-  return (w1.pos.x === w2.pos.x) || (w1.pos.x === w2.pos.y) || (w1.pos.y === w2.pos.x)
+const checkCrash = (pos1 = {}, pos2 = {}) => {
+  if(!pos1.x || !pos1.y || !pos2.x || !pos2.y) return false
+  return (pos1.x === pos2.x) || (pos1.x === pos2.y) || (pos1.y === pos2.x) || (pos1.y === pos2.y)
 }
 
 /*
@@ -11,16 +12,15 @@ const checkCrash = (w1, w2) => {
   the two worms that have crashed.
 */
 
-const findCrashes = (worms) => {
+const findCrashes = (worms = []) => {
   const crashes =
     worms.map(w1 => {
       const found = worms.filter(worm => worm.uniqueName !== w1.uniqueName)
-                         .filter(fWorm => checkCrash(w1, fWorm))
+                         .filter(fWorm => checkCrash(w1.pos, fWorm.pos))
       return found.length > 0 ? { w1 , w2: found[0] } : null
     }).filter(worm => worm != null)
     return crashes
 }
-
 /*
   Responsible for knowing what is going to happen to two worms that have crashed.
   If they are from the same gender, they will fight and one of them will die.
@@ -56,4 +56,6 @@ const uniqueCrashes = (crashes = []) => {
   return uniqCrashes.map(v => values[v])
 }
 
-module.exports = { uniqueCrashes, resolveCrashes, findCrashes, checkCrash }
+const normalizeWormsThatHaveCrashed = (worms) => resolveCrashes(uniqueCrashes(findCrashes(worms)), worms)
+
+module.exports = { normalizeWormsThatHaveCrashed, checkCrash, findCrashes, resolveCrashes, uniqueCrashes }

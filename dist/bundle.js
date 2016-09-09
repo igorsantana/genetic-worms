@@ -299,7 +299,11 @@ var uniqueCrashes = function uniqueCrashes() {
   });
 };
 
-module.exports = { uniqueCrashes: uniqueCrashes, resolveCrashes: resolveCrashes, findCrashes: findCrashes, checkCrash: checkCrash };
+var normalizeWormsThatHaveCrashed = function normalizeWormsThatHaveCrashed(worms) {
+  return resolveCrashes(uniqueCrashes(findCrashes(worms)), worms);
+};
+
+module.exports = { normalizeWormsThatHaveCrashed: normalizeWormsThatHaveCrashed };
 
 },{"./Interactions":4}],4:[function(require,module,exports){
 'use strict';
@@ -363,13 +367,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
   This function will apply the randomly generated orientation on a worm.
   Incrementing or decrementing it's x or y axis on canvas.
 */
-var applyNewOrientation = function applyNewOrientation(worm) {
-  var orientation = function orientation() {
-    return ['up', 'down', 'left', 'right'][parseInt(Math.random() * 100 / 25)];
-  };
-  var pos = worm.pos;
 
-  switch (orientation()) {
+var applyAxisChange = function applyAxisChange(orientation, worm) {
+  var pos = worm.pos;
+  switch (orientation) {
     case 'up':
       return _extends({}, worm, { pos: _extends({}, pos, { y: pos.y + 1, orientation: 'up' }) });
     case 'down':
@@ -383,7 +384,26 @@ var applyNewOrientation = function applyNewOrientation(worm) {
   }
 };
 
-module.exports = applyNewOrientation;
+var applyNewOrientation = function applyNewOrientation(worm) {
+  var orientation = function orientation() {
+    return ['up', 'down', 'left', 'right'][parseInt(Math.random() * 100 / 25)];
+  };
+
+  if (worm.pos.counter < 3) {
+    var _newWorm = applyAxisChange(worm.pos.orientation, worm);
+    return _extends({}, _newWorm, { pos: _extends({}, _newWorm.pos, { counter: worm.pos.counter + 1 }) });
+  }
+  var newWorm = applyAxisChange(orientation(), worm);
+  return _extends({}, newWorm, { pos: _extends({}, newWorm.pos, { counter: 1 }) });
+};
+
+var moveWorms = function moveWorms(worms) {
+  return worms.map(function (worm) {
+    return applyNewOrientation(worm);
+  });
+};
+
+module.exports = { applyNewOrientation: applyNewOrientation, moveWorms: moveWorms };
 
 },{}],7:[function(require,module,exports){
 'use strict';
@@ -415,7 +435,8 @@ var Worm = function Worm() {
   var pos = {
     x: parseInt(Math.random() * 300),
     y: parseInt(Math.random() * 150),
-    orientation: 'left'
+    orientation: 'left',
+    counter: 0
   };
   var toString = function toString() {
     return '('.concat(pos.x).concat(', ').concat(pos.y).concat(') UNIQUE: ').concat(uniqueName);
@@ -432,20 +453,26 @@ module.exports = Worm;
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var Worm = require('./Model/Worm');
-var Orientation = require('./App/Orientation');
-var Interactions = require('./App/Interactions');
 
-var _require = require('./App/Crash');
+var _require = require('./App/Orientation');
 
-var uniqueCrashes = _require.uniqueCrashes;
-var resolveCrashes = _require.resolveCrashes;
-var findCrashes = _require.findCrashes;
-var checkCrash = _require.checkCrash;
+var moveWorms = _require.moveWorms;
 
+var _require2 = require('./App/Crash');
 
-var worms = [].concat(_toConsumableArray(new Array(20))).map(function (value) {
+var normalizeWormsThatHaveCrashed = _require2.normalizeWormsThatHaveCrashed;
+
+// Initial population with random worms
+
+var worms = [].concat(_toConsumableArray(new Array(1))).map(function (value) {
   return Worm();
 });
-var worms2 = resolveCrashes(uniqueCrashes(findCrashes(worms)), worms);
 
-},{"./App/Crash":3,"./App/Interactions":4,"./App/Orientation":6,"./Model/Worm":7}]},{},[8]);
+setInterval(function () {
+  worms = moveWorms(worms);
+  worms = normalizeWormsThatHaveCrashed(worms);
+  console.log(worms);
+  console.log('------');
+}, 1000);
+
+},{"./App/Crash":3,"./App/Orientation":6,"./Model/Worm":7}]},{},[8]);

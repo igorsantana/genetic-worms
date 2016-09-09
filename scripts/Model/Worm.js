@@ -17,7 +17,8 @@ const Worm = (strength = 0, charisma = 0) => {
   const pos = {
     x: parseInt(Math.random() * 300),
     y: parseInt(Math.random() * 150),
-    orientation: 'left'
+    orientation: 'left',
+    counter: 0
   }
   const toString = () => '('.concat(pos.x).concat(', ').concat(pos.y).concat(') UNIQUE: ').concat(uniqueName)
 
