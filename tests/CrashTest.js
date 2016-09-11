@@ -1,5 +1,5 @@
 const assert     = require('assert')
-const { checkCrash, findCrashes, uniqueCrashes } = require('../scripts/App/Crash')
+const { checkCrash, findCrashes, uniqueCrashes, resolveCrashes } = require('../scripts/App/Crash')
 const Worm = require('../scripts/Model/Worm')
 
 describe('MODULE: Crashes', () => {
@@ -105,6 +105,30 @@ describe('MODULE: Crashes', () => {
 
     it('should return an empty array if is passed one', () => {
       assert.equal(uniqueCrashes([]).length, 0)
+    })
+  })
+
+  describe('Function: resolveCrashes', () => {
+    it('should return the same worms if there are no crashes', () => {
+      let worms = [w1, w2, w3]
+      assert.equal(resolveCrashes([], worms), worms)
+    })
+
+    it('should remove a worm if the crashes are from the same sex', () => {
+      w1.gender = 'MALE'
+      w2.gender = 'MALE'
+      createCrash()
+      const crashes = uniqueCrashes(findCrashes([w1, w2, w3]))
+      assert.equal(resolveCrashes(crashes, [w1, w2, w3]).length, 2)
+    })
+
+    it('should generate a new worm if the worms that have crashed match', () => {
+      w1.attr.charisma = 10
+      w2.gender = 'FEMALE'
+      w2.attr.charisma = 10
+      createCrash()
+      const crashes = uniqueCrashes(findCrashes([w1, w2, w3]))
+      assert.equal(resolveCrashes(crashes, [w1, w2, w3]).length, 4)
     })
   })
 
