@@ -26,7 +26,7 @@ const worms = (worms = initialWorms, action) => {
 }
 
 const logs = (state = initialLogs, action) => {
-
+  
   return state;
 }
 

@@ -24,7 +24,7 @@ const WormFactory = (strength = 0, charisma = 0) => {
 
   const proto = { updatePosition, toString, getAttributes }
   const gender = parseInt(Math.random() * 10) < 5 ? 'male' : 'female'
-  const Worm = {
+  let Worm = {
     gender: gender.toUpperCase(),
     name:   chance.name({ gender }),
     id:     uuid.v1(),
@@ -33,8 +33,8 @@ const WormFactory = (strength = 0, charisma = 0) => {
       charisma: charisma == 0 ? parseInt(Math.random() * CHA) + parseInt((CHA / 3) * 2) : charisma
     },
     pos:    {
-      x: parseInt(Math.random() * 300),
-      y: parseInt(Math.random() * 300),
+      x: parseInt(Math.random() * 600),
+      y: parseInt(Math.random() * 600),
       width: 30,
       height: 7.5
     }
