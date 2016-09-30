@@ -4,26 +4,43 @@
   of mutation.
 */
 
-const Worm = (strength = 0, charisma = 0) => {
-  const gender      = parseInt(Math.random() * 10) < 5 ? 'MALE' : 'FEMALE'
-  const uniqueName  = require('uuid').v1()
-  const { STR, CHA } = require('../App/MaximumValues')().getValues()
+const chance  = require('chance')()
+const uuid    = require('uuid')
 
-  const attr  = {
-    strength: strength == 0 ? parseInt(Math.random() * STR) + parseInt((STR / 3) * 2) : strength,
-    charisma: charisma == 0 ? parseInt(Math.random() * CHA) + parseInt((CHA / 3) * 2) : charisma
-  }
-  // The position of the worm. It's used to render the object on canvas and to check for colisions
-  const pos = {
-    x: parseInt(Math.random() * 300),
-    y: parseInt(Math.random() * 150),
-    orientation: 'left',
-    counter: 0
-  }
-  const toString = () => '('.concat(pos.x).concat(', ').concat(pos.y).concat(') UNIQUE: ').concat(uniqueName)
-
-  return { gender, attr, pos, uniqueName, toString }
+function updatePosition(x, y, width, height){
+  this.pos = Object.assign({}, this.pos, { x, y, width, height })
 }
 
+function toString(){
+  return 'Gender: ' + this.gender + ' ('.concat(this.pos.x).concat(', ').concat(this.pos.y).concat(') ID: ').concat(this.name)
+}
 
-module.exports = Worm
+function getAttributes(){
+  return this.attr
+}
+
+const WormFactory = (strength = 0, charisma = 0) => {
+  const { STR, CHA } = require('../App/MaximumValues')().getValues()
+
+  const proto = { updatePosition, toString, getAttributes }
+  const gender = parseInt(Math.random() * 10) < 5 ? 'male' : 'female'
+  const Worm = {
+    gender: gender.toUpperCase(),
+    name:   chance.name({ gender }),
+    id:     uuid.v1(),
+    attr:   {
+      strength: strength == 0 ? parseInt(Math.random() * STR) + parseInt((STR / 3) * 2) : strength,
+      charisma: charisma == 0 ? parseInt(Math.random() * CHA) + parseInt((CHA / 3) * 2) : charisma
+    },
+    pos:    {
+      x: parseInt(Math.random() * 300),
+      y: parseInt(Math.random() * 300),
+      width: 30,
+      height: 7.5
+    }
+  }
+  Object.setPrototypeOf(Worm, proto)
+  return Worm
+}
+
+module.exports = WormFactory
